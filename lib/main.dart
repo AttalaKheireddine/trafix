@@ -142,6 +142,8 @@ class login extends StatefulWidget
 }
 
 class _loginState extends State<login> {
+
+
   @override
   Widget build(BuildContext context) {
 
@@ -155,47 +157,77 @@ class _loginState extends State<login> {
        body:
 
        Center
-          (child: Column(   mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>
-       [
-         Image.asset('assets/logo-w.png',scale: 5,),
+          (child:
+       SingleChildScrollView(
+         child: Column(   mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>
+         [
+           Image.asset('assets/logo-w.png',scale: 5,),
 
-         //--- Auth button
+           //--- Auth button
 
-         Container(
+           Container(
 
-           margin: EdgeInsets.only(left: 60,right: 60,top: 20),
+             margin: EdgeInsets.only(left: 60,right: 60,top: 20),
 
 
+               child:
+           RaisedButton(
+             color: Colors.orange,
+               padding: EdgeInsets.only(top: 10,bottom: 10),
+               elevation: 20,
+               shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+
+               onPressed:() {
+
+
+                 showDialog(
+                     context: context,
+                     builder: (BuildContext context) {
+                       return AlertDialog(
+                         title: Text("Vos infos",textAlign: TextAlign.center,),
+                         content: Column(
+                           mainAxisSize: MainAxisSize.min,
+                           children: <Widget>[
+                               TextField(   decoration: new InputDecoration( labelText: 'Nom', hintText: 'ex: khaled mebhah'), ) ,
+                               TextField(   decoration: new InputDecoration( labelText: 'Num', hintText: 'ex: 06....'), ),
+
+                           ],
+                         ),
+
+                         actions: <Widget>[
+                           FlatButton(
+                             child: Text('Soummet'),
+                             onPressed: () {
+                             },
+                           ),
+                         ],
+                       );
+                     });
+
+
+
+                 /*Navigator.push(
+                 context,
+                 MaterialPageRoute(builder: (context) => new MyApp()));*/},
              child:
-         RaisedButton(
-           color: Colors.orange,
-             padding: EdgeInsets.only(top: 10,bottom: 10),
-             elevation: 20,
-             shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
 
-             onPressed:() {
-               Navigator.push(
-               context,
-               MaterialPageRoute(builder: (context) => new MyApp()));},
-           child:
-
-         Row(
-           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+           Row(
+             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 
 
 
-
-           children: <Widget>
-           [
-             Icon(Icons.phone , color: Colors.white,size: 30,),
-             Text('Authentification',style: TextStyle(color: Colors.white ,fontSize: 20),),
-           ],
-         ),
-         )
-         )
-       ],)
+             children: <Widget>
+             [
+               Icon(Icons.phone , color: Colors.white,size: 30,),
+               Text('Authentification',style: TextStyle(color: Colors.white ,fontSize: 20),),
+             ],
+           ),
+           )
+           )
+         ],),
+       )
 
 
 
@@ -224,8 +256,8 @@ class _MapState extends State<Map> {
 
   Completer<GoogleMapController> _controller = Completer();
 
-  static final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
+  static final CameraPosition _mainpos = CameraPosition(
+    target: LatLng(36.705311,  3.171040),
     zoom: 14.4746,
   );
   @override
@@ -243,8 +275,8 @@ class _MapState extends State<Map> {
 
 
            body:GoogleMap(
-             mapType: MapType.hybrid,
-             initialCameraPosition: _kGooglePlex,
+             mapType: MapType.normal,
+             initialCameraPosition: _mainpos,
              onMapCreated: (GoogleMapController controller) {
                _controller.complete(controller);
              },
