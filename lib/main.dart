@@ -8,7 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 
 
-void main() => runApp(Rootscreen());
+void main() => runApp(Sospage());
 
 
 class Rootscreen extends StatefulWidget
@@ -446,6 +446,184 @@ String s="0";
 
       ),
 
+    );
+  }
+}
+
+
+//---------- Sos page ---------------------------
+class Sospage extends StatefulWidget
+{
+  @override
+  _SospageState createState() => _SospageState();
+}
+
+class _SospageState extends State<Sospage> {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+
+        appBar: AppBar(backgroundColor: Colors.deepPurple, leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),),
+
+
+
+        body: ListView( children: <Widget>[
+
+
+          //   ###########  Card   ##########
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: const ListTile(
+                      leading: Icon(Icons.directions_car),
+                      title: Text('Police National'),
+                      subtitle: Text('La Police National intervient dans le cas.......'),
+                    ),
+                  ),
+
+
+                  ButtonTheme.bar( // make buttons use the appropriate styles for cards
+                    child: ButtonBar(
+                      children: <Widget>[
+                        FlatButton(
+
+                          child: const Text('Appeler', style: TextStyle(fontSize: 20,color: Colors.deepPurpleAccent),),
+                          onPressed: () { /* ... */ },
+                        ),
+
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          Divider( indent: 20,endIndent: 20,),
+
+          //   ###########  Gendarmerie   ##########
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: const ListTile(
+                      leading: Icon(Icons.directions_car),
+                      title: Text('Gendarmerie Nationale'),
+                      subtitle: Text('La Gendarmerie National intervient dans le cas.......'),
+                    ),
+                  ),
+
+
+                  ButtonTheme.bar( // make buttons use the appropriate styles for cards
+                    child: ButtonBar(
+                      children: <Widget>[
+                        FlatButton(
+                          child: const Text('Appeler', style: TextStyle(fontSize: 20 ,color: Colors.deepPurpleAccent),),
+                          onPressed: () { /* ... */ },
+                        ),
+
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          Divider( indent: 20,endIndent: 20,),
+
+          //   ###########  Card   ##########
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: const ListTile(
+                      leading: Icon(Icons.directions_car),
+                      title: Text('Protection Civile'),
+                      subtitle: Text('La Protection Civile intervient dans le cas.......'),
+                    ),
+                  ),
+
+
+                  ButtonTheme.bar( // make buttons use the appropriate styles for cards
+                    child: ButtonBar(
+                      children: <Widget>[
+                        FlatButton(
+                          child: const Text('Appeler', style: TextStyle(fontSize: 20 ,color: Colors.deepPurpleAccent),),
+                          onPressed: () { /* ... */ },
+                        ),
+
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          Divider( indent: 20,endIndent: 20,),
+
+
+          //   ###########  Card   ##########
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: const ListTile(
+                      leading: Icon(Icons.directions_car),
+                      title: Text('SAMU'),
+                      subtitle: Text('Le Samu intervient dans le cas .......'),
+                    ),
+                  ),
+
+
+                  ButtonTheme.bar( // make buttons use the appropriate styles for cards
+                    child: ButtonBar(
+                      children: <Widget>[
+                        FlatButton(
+                          child: const Text('Appeler ', style: TextStyle(fontSize: 20 ,color: Colors.deepPurpleAccent),),
+                          onPressed: () { /* ... */ },
+                        ),
+
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+        ],)
+
+
+
+
+
+      ),
     );
   }
 }
