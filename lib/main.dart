@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 
@@ -20,7 +20,7 @@ class Rootscreen extends StatefulWidget
 class _RootscreenState extends State<Rootscreen> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp( home: Scaffold( body: login(),),);
+    return MaterialApp( home: Scaffold( body: Sospage(),),);
   }
 }
 
@@ -486,11 +486,8 @@ class _SospageState extends State<Sospage> {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: const ListTile(
-                      leading: Icon(Icons.directions_car),
-                      title: Text('Police National'),
-                      subtitle: Text('La Police National intervient dans le cas.......'),
-                    ),
+                    child: _gettile("assets/Police.png", 'Police National', 'La Police National intervient dans le cas.......')
+
                   ),
 
 
@@ -500,7 +497,7 @@ class _SospageState extends State<Sospage> {
                         FlatButton(
 
                           child: const Text('Appeler', style: TextStyle(fontSize: 20,color: Colors.deepPurpleAccent),),
-                          onPressed: () { /* ... */ },
+                          onPressed: () { launch("tel:1548"); },
                         ),
 
                       ],
@@ -522,11 +519,8 @@ class _SospageState extends State<Sospage> {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: const ListTile(
-                      leading: Icon(Icons.directions_car),
-                      title: Text('Gendarmerie Nationale'),
-                      subtitle: Text('La Gendarmerie National intervient dans le cas.......'),
-                    ),
+                    child: _gettile("assets/GN.png", 'Gendarmerie Nationale', 'La Gendarmerie National intervient dans le cas.......')
+
                   ),
 
 
@@ -535,7 +529,7 @@ class _SospageState extends State<Sospage> {
                       children: <Widget>[
                         FlatButton(
                           child: const Text('Appeler', style: TextStyle(fontSize: 20 ,color: Colors.deepPurpleAccent),),
-                          onPressed: () { /* ... */ },
+                          onPressed: () { launch("tel:1055 ");},
                         ),
 
                       ],
@@ -557,11 +551,8 @@ class _SospageState extends State<Sospage> {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: const ListTile(
-                      leading: Icon(Icons.directions_car),
-                      title: Text('Protection Civile'),
-                      subtitle: Text('La Protection Civile intervient dans le cas.......'),
-                    ),
+                    child: _gettile("assets/Protection_civile.png",'Protection Civile', 'La Protection Civile intervient dans le cas.......')
+
                   ),
 
 
@@ -570,7 +561,7 @@ class _SospageState extends State<Sospage> {
                       children: <Widget>[
                         FlatButton(
                           child: const Text('Appeler', style: TextStyle(fontSize: 20 ,color: Colors.deepPurpleAccent),),
-                          onPressed: () { /* ... */ },
+                          onPressed: () { launch("tel:14"); },
                         ),
 
                       ],
@@ -588,16 +579,18 @@ class _SospageState extends State<Sospage> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Card(
+
               child: Column(
+
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
+
                 children: <Widget>[
+
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: const ListTile(
-                      leading: Icon(Icons.directions_car),
-                      title: Text('SAMU'),
-                      subtitle: Text('Le Samu intervient dans le cas .......'),
-                    ),
+                      padding: const EdgeInsets.all(8.0),
+                      child: _gettile("assets/Amb.png", 'SAMU', 'Le Samu intervient dans le cas .......')
+
                   ),
 
 
@@ -606,7 +599,7 @@ class _SospageState extends State<Sospage> {
                       children: <Widget>[
                         FlatButton(
                           child: const Text('Appeler ', style: TextStyle(fontSize: 20 ,color: Colors.deepPurpleAccent),),
-                          onPressed: () { /* ... */ },
+                          onPressed: () { launch("tel:021235050");},
                         ),
 
                       ],
@@ -625,5 +618,12 @@ class _SospageState extends State<Sospage> {
 
       ),
     );
+  }
+  Widget _gettile(String path , String title , String sub ) {
+    var assetImage = AssetImage(path);
+    var image = new Image(image: assetImage,);
+    final ListTile listTile = new ListTile(title: new Text(title),
+        leading: image, subtitle: new Text(sub));
+    return listTile;
   }
 }
