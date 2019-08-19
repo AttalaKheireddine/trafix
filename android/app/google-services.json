@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "28669577087",
+    "firebase_url": "https://trafix-e2919.firebaseio.com",
+    "project_id": "trafix-e2919",
+    "storage_bucket": "trafix-e2919.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:28669577087:android:01462a3635a73dbc",
+        "android_client_info": {
+          "package_name": "com.urabnix.trafix"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "28669577087-ooqgk1djll5qm7fmlb43c6prpb8dskha.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.urabnix.trafix",
+            "certificate_hash": "f91ef8e948a15b1a4ac19c497cf5567fdc4c10f2"
+          }
+        },
+        {
+          "client_id": "28669577087-qmplt8ejunr1tigu25dcseindc6rbhq6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwGhm-uFNA5xBX7mkT5J9PHxkZj3lD7t8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "28669577087-qmplt8ejunr1tigu25dcseindc6rbhq6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

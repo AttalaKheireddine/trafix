@@ -5,10 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 
-void main() => runApp(Sospage());
+
+
+
+
+void main() => runApp(Rootscreen());
 
 
 class Rootscreen extends StatefulWidget
@@ -20,18 +25,25 @@ class Rootscreen extends StatefulWidget
 class _RootscreenState extends State<Rootscreen> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp( home: Scaffold( body: Sospage(),),);
+    return MaterialApp( home: Scaffold( body: login(),),);
   }
 }
 
 
 class MyApp extends StatefulWidget {
+  final String name;
+  final String num;
+  MyApp({Key key, @required this.name,@required this.num}) : super(key: key);
+
+
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
   final appTitle = '';
+
+
 
   AnimationController _controller;
   Animation<double> _animation;
@@ -84,7 +96,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
 
                ],
                currentAccountPicture: CircleAvatar(child: Icon(Icons.assignment_ind ,size: 50,),backgroundColor: Colors.deepPurple,),
-               accountName: Text("fouad"), accountEmail: Text("+213 669506475")),
+               accountName: Text(widget.name), accountEmail: Text(widget.num)),
 
             ListTile( title: Text('Signaler un accident'),
                       leading: Icon(Icons.local_hospital),
@@ -105,7 +117,8 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
             Divider(),
             ListTile( title: Text('SOS'),
               leading: Icon(Icons.call),
-              onTap: (){ },
+              onTap: (){ _scaffoldKey.currentState.openEndDrawer();
+              Navigator.push(context, MaterialPageRoute(builder: (context) => new Sospage())); },
             ),
             Divider(),
             ListTile( title: Text('Sortir'),
@@ -142,6 +155,90 @@ class login extends StatefulWidget
 }
 
 class _loginState extends State<login> {
+
+  String phoneNo;
+  String smsCode;
+  String verificationId;
+  String Name;
+
+
+//####          Firebase
+
+  Future<void> verifyPhone() async {
+    final PhoneCodeAutoRetrievalTimeout autoRetrieve = (String verId) {
+      this.verificationId = verId;
+    };
+
+    final PhoneCodeSent smsCodeSent = (String verId, [int forceCodeResend]) {
+      this.verificationId = verId;
+      smsCodeDialog(context).then((value) {
+        print('Signed in');
+      });
+    };
+
+    final PhoneVerificationCompleted verifiedSuccess = (FirebaseUser user) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => new MyApp(name: Name , num: phoneNo,)));
+    };
+
+    final PhoneVerificationFailed veriFailed = (AuthException exception) {
+      print('${exception.message}');
+    };
+
+    await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: this.phoneNo,
+        codeAutoRetrievalTimeout: autoRetrieve,
+        codeSent: smsCodeSent,
+        timeout: const Duration(seconds: 5),
+        verificationCompleted: verifiedSuccess,
+        verificationFailed: veriFailed);
+  }
+
+  Future<bool> smsCodeDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return new AlertDialog(
+            title: Text('votre code'),
+            content: TextField(
+              onChanged: (value) {
+                this.smsCode = value;
+              },
+              decoration: InputDecoration( labelText: "code"),
+            ),
+            contentPadding: EdgeInsets.all(10.0),
+            actions: <Widget>[
+              new FlatButton(
+                child: Text('Done'),
+                onPressed: () {
+                  FirebaseAuth.instance.currentUser().then((user) {
+                    if (user != null) {
+                      Navigator.of(context).pop();
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => new MyApp(name: Name , num: phoneNo,)));
+                    } else {
+                      Navigator.of(context).pop();
+                      signIn();
+                    }
+                  });
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  signIn() {
+    FirebaseAuth.instance
+        .signInWithPhoneNumber(verificationId: verificationId, smsCode: smsCode)
+        .then((user) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => new MyApp( name: Name , num: phoneNo,)));
+
+    }).catchError((e) {
+      print(e);
+    });
+  }
+
+  //////////////////////////////////////
 
 
   @override
@@ -190,8 +287,12 @@ class _loginState extends State<login> {
                          content: Column(
                            mainAxisSize: MainAxisSize.min,
                            children: <Widget>[
-                               TextField(   decoration: new InputDecoration( labelText: 'Nom', hintText: 'ex: khaled mebhah'), ) ,
-                               TextField(   decoration: new InputDecoration( labelText: 'Num', hintText: 'ex: 06....'), ),
+                               TextField(
+                                 onChanged: (value) { this.Name = value;},
+                                 decoration: new InputDecoration( labelText: 'Nom', hintText: 'ex: khaled mebhah'), ) ,
+                               TextField(
+                                 onChanged: (value) { this.phoneNo = value;},
+                                 decoration: new InputDecoration( labelText: 'Num', hintText: 'ex: +213669 ....'), ),
 
                            ],
                          ),
@@ -199,8 +300,8 @@ class _loginState extends State<login> {
                          actions: <Widget>[
                            FlatButton(
                              child: Text('Soummet'),
-                             onPressed: () {
-                             },
+                             onPressed: verifyPhone,
+
                            ),
                          ],
                        );
@@ -208,9 +309,7 @@ class _loginState extends State<login> {
 
 
 
-                 /*Navigator.push(
-                 context,
-                 MaterialPageRoute(builder: (context) => new MyApp()));*/},
+                   },
              child:
 
            Row(
@@ -298,7 +397,9 @@ class signaler extends StatefulWidget {
 
 class _signalerState extends State<signaler> {
 
-String s="0";
+
+  TextEditingController place,nb_v,date_time;
+  String s="0";
   File _image;
 
 
@@ -326,7 +427,7 @@ String s="0";
           color: Colors.white,
           onPressed: () {
             Navigator.pop(context);
-          },
+                        },
         ),),
         body: ListView(
 
@@ -334,107 +435,128 @@ String s="0";
 
 
 
-          Column(
-            children: <Widget>[
-              
-              Image.asset('assets/car-crash.png',scale: 2,),
+          SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
 
-              Row(
+                Image.asset('assets/car-crash.png',scale: 2,),
 
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //  ------ TextField
 
-                children: <Widget>[
+                Row(
 
-                 Padding(
-                   padding: const EdgeInsets.only(left: 20),
-                   child: Icon(Icons.place ,size: 50,),
-                 ),
-                 Flexible(child:
-                 Padding(
-                   padding: const EdgeInsets.only(left: 20,right: 40,bottom: 10),
-                   child: Container(child: TextField( decoration:  new InputDecoration(
-                       hintText: 'Ex: alger',
-                       labelText: 'lieu',
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 
-                   )
-                     ,)),
-                 ),)
-              ],),
+                  children: <Widget>[
 
+                   Padding(
+                     padding: const EdgeInsets.only(left: 20),
+                     child: Icon(Icons.place ,size: 50,),
+                   ),
+                   Flexible(child:
+                   Padding(
+                     padding: const EdgeInsets.only(left: 20,right: 40,bottom: 10),
+                     child: Container(child:
+                     TextField(
+                         controller: place,
+                         decoration:  new InputDecoration(
+                         hintText: 'Ex: alger',
+                         labelText: 'lieu',
 
-              Row(
+                     )
+                       ,)),
+                   ),)
+                ],),
 
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //  ------ TextField
 
-                children: <Widget>[
+                Row(
 
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: Icon(Icons.people ,size: 50,),
-                  ),
-                  Flexible(child:
-                  Padding(
-                    padding:const EdgeInsets.only(left: 20,right: 40,bottom: 10),
-                    child: Container(child: TextField( decoration:  new InputDecoration(
-                      hintText: 'Ex: 10',
-                      labelText: 'nombre de victimes',
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 
+                  children: <Widget>[
 
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Icon(Icons.people ,size: 50,),
                     ),
-                      keyboardType: TextInputType.number,
-                      )),
-                  ),)
-                ],),
+                    Flexible(child:
+                    Padding(
+                      padding:const EdgeInsets.only(left: 20,right: 40,bottom: 10),
+                      child: Container(child: TextField(
+                        controller: nb_v,
+                        decoration:
+                        new InputDecoration(
+                        hintText: 'Ex: 10',
+                        labelText: 'nombre de victimes',
 
 
-              Row(
+                      ),
+                        keyboardType: TextInputType.number,
+                        )),
+                    ),)
+                  ],),
 
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //  ------ TextField
 
-                children: <Widget>[
+                Row(
 
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: Icon(Icons.calendar_today ,size: 50,),
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+                  children: <Widget>[
+
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Icon(Icons.calendar_today ,size: 50,),
+                    ),
+                    Flexible(child:
+                    Padding(
+                      padding:const EdgeInsets.only(left: 20,right: 40,bottom: 20),
+                      child: Container(child:
+                      TextField(
+                        controller: date_time,
+                        decoration:
+                        new InputDecoration(
+                        hintText: 'Ex: ',
+                        labelText: 'Date et heure',
+
+                      )
+                        ,
+                      keyboardType: TextInputType.datetime)),
+                    ),)
+                  ],),
+
+
+                 //   ### Image picker
+
+                 IconButton( iconSize: 40, color: Colors.deepPurpleAccent, icon: Icon(Icons.add_photo_alternate), onPressed:() {getImage() ;
+
+
+                 },),
+
+                _image == null
+                    ? Text('Ajouter une image')
+                    : Row( mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[  Icon( Icons.check,color: Colors.green,), Text("Image chargé"),],),
+
+
+                //  ######       Submition button
+                Padding(
+                  padding: const EdgeInsets.only(top: 40),
+                  child: RaisedButton(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    onPressed: ()
+                    {
+
+                    },
+                    elevation: 5,
+                    color: Colors.deepPurpleAccent,
+                    child: Text("Soummetre",style: TextStyle(color: Colors.white ),),
+
                   ),
-                  Flexible(child:
-                  Padding(
-                    padding:const EdgeInsets.only(left: 20,right: 40,bottom: 20),
-                    child: Container(child: TextField( decoration:  new InputDecoration(
-                      hintText: 'Ex: ',
-                      labelText: 'Date et heure',
+                )
 
-                    )
-                      ,
-                    keyboardType: TextInputType.datetime)),
-                  ),)
-                ],),
-              
-              
-               IconButton( iconSize: 40, color: Colors.deepPurpleAccent, icon: Icon(Icons.add_photo_alternate), onPressed:() {getImage() ;
-
-
-               },),
-
-              _image == null
-                  ? Text('Ajouter une image')
-                  : Row( mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[  Icon( Icons.check,color: Colors.green,), Text("Image chargé"),],),
-
-
-
-              Padding(
-                padding: const EdgeInsets.only(top: 40),
-                child: RaisedButton(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                  onPressed: () {},
-                  elevation: 10,
-                  color: Colors.deepPurpleAccent,
-                  child: Text("Soummetre",style: TextStyle(color: Colors.white ),),
-
-                ),
-              )
-
-            ],
+              ],
+            ),
           ),
 
 
@@ -477,7 +599,7 @@ class _SospageState extends State<Sospage> {
         body: ListView( children: <Widget>[
 
 
-          //   ###########  Card   ##########
+          //   ###########  Police   ##########
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Card(
@@ -542,7 +664,7 @@ class _SospageState extends State<Sospage> {
 
           Divider( indent: 20,endIndent: 20,),
 
-          //   ###########  Card   ##########
+          //   ###########  Protection civile   ##########
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Card(
@@ -575,7 +697,8 @@ class _SospageState extends State<Sospage> {
           Divider( indent: 20,endIndent: 20,),
 
 
-          //   ###########  Card   ##########
+          //   ###########  SAMU   ##########
+
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Card(
@@ -619,6 +742,7 @@ class _SospageState extends State<Sospage> {
       ),
     );
   }
+
   Widget _gettile(String path , String title , String sub ) {
     var assetImage = AssetImage(path);
     var image = new Image(image: assetImage,);
